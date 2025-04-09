@@ -1,0 +1,418 @@
+{
+  "name": "EPD_CheeseBread_LongLegs",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "df37aab0-8054-40f5-82d8-e057f11e9304",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://web-production-1e19.up.railway.app/onibus_bruto",
+        "options": {
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        180,
+        0
+      ],
+      "id": "62695bf6-8951-4c35-b828-d168ab5f413a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a513b1ee-2e52-4144-8c13-0a7ac764c987",
+              "name": "datahora",
+              "value": "={{ new DateTime ($json['datahora']).toFormat('yyyy-MM-dd HH:mm:ss:SSS') }}",
+              "type": "string"
+            },
+            {
+              "id": "7a2f468a-3f3c-4bab-bc48-91fb055cb56f",
+              "name": "datahoraenvio",
+              "value": "={{ new DateTime ($json['datahoraenvio']).toFormat('yyyy-MM-dd HH:mm:ss:SSS') }}",
+              "type": "string"
+            },
+            {
+              "id": "72b65d69-4c99-4bb5-8e01-60ee0f1df325",
+              "name": "datahoraservidor",
+              "value": "={{ new DateTime ($json['datahoraservidor']).toFormat('yyyy-MM-dd HH:mm:ss:SSS') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        800,
+        0
+      ],
+      "id": "e04d714a-8414-45fe-b1ed-4f7868455683",
+      "name": "Formatar Datas"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "eb6081d0-3f1d-4821-ace1-15019c78c9b5",
+              "name": "latitude",
+              "value": "={{ $json.latitude.replace(',', '.') }}",
+              "type": "string"
+            },
+            {
+              "id": "a486c131-0c40-47a2-8552-3f170c35023b",
+              "name": "longitude",
+              "value": "={{ $json.longitude.replace(',', '.') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        980,
+        0
+      ],
+      "id": "448831d5-c026-4a02-875c-5f553f7440b9",
+      "name": "Padronizar GPS"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "43aef34d-78ef-4ca4-81cf-808948578f99",
+              "leftValue": "={{ $json.velocidade }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "dc97052f-8a2f-4ff8-957a-3cbddf875854",
+              "leftValue": "={{ $json.linha }}",
+              "rightValue": "GARAGEM",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        380,
+        0
+      ],
+      "id": "e4c335ee-cd9c-4fb3-bccb-d2168f1c2f58",
+      "name": "Filtrar Velocidade e Linha"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c0ec5118-6d73-43aa-bed3-8686eed3cdbb",
+              "name": "transmissao",
+              "value": "={{ Math.round(($json.datahoraservidor - $json.datahora) / 1000) }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        600,
+        0
+      ],
+      "id": "e95a4388-0898-453b-89c7-6ebeec656a56",
+      "name": "Calcula Transamissão"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yy0HNaqko8Wbfr3AT3Uv64lGCrpLuUgksHSj3BRHkkQ",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "datahora": "={{ $json.datahora }}",
+            "datahoraenvio": "={{ $json.datahoraenvio }}",
+            "datahoraservidor": "={{ $json.datahoraservidor }}",
+            "latitude": "={{ $json.latitude }}",
+            "linha": "={{ $json.linha }}",
+            "longitude": "={{ $json.longitude }}",
+            "ordem": "={{ $json.ordem }}",
+            "velocidade": "={{ $json.velocidade }}",
+            "transmissao": "={{ $json.transmissao }}"
+          },
+          "matchingColumns": [
+            "datahora"
+          ],
+          "schema": [
+            {
+              "id": "datahora",
+              "displayName": "datahora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "datahoraenvio",
+              "displayName": "datahoraenvio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "datahoraservidor",
+              "displayName": "datahoraservidor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "latitude",
+              "displayName": "latitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "linha",
+              "displayName": "linha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "longitude",
+              "displayName": "longitude",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ordem",
+              "displayName": "ordem",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "velocidade",
+              "displayName": "velocidade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "transmissao",
+              "displayName": "transmissao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1200,
+        0
+      ],
+      "id": "27b90dd1-6aa9-4791-8053-5375dfb237a0",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "dCiCDlvIUPB1Sx7b",
+          "name": "Google Sheets account 4"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Velocidade e Linha",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Datas": {
+      "main": [
+        [
+          {
+            "node": "Padronizar GPS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Velocidade e Linha": {
+      "main": [
+        [
+          {
+            "node": "Calcula Transamissão",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Padronizar GPS": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcula Transamissão": {
+      "main": [
+        [
+          {
+            "node": "Formatar Datas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5550165a-06f4-4720-8a4f-79b7256078c6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eaba0b478a2ef2eb04716a51096429ec29069a52b2816e0b9bc7d16ed3d8e8de"
+  },
+  "id": "8GaIbjIb0U0CyoOm",
+  "tags": [
+    {
+      "createdAt": "2025-04-02T13:05:08.853Z",
+      "updatedAt": "2025-04-02T13:10:26.465Z",
+      "id": "AwoOJL4fvwWO0sWK",
+      "name": "Gui Duran"
+    },
+    {
+      "createdAt": "2025-04-02T13:04:50.328Z",
+      "updatedAt": "2025-04-02T13:10:32.805Z",
+      "id": "cdBx3S7oOsQRftsx",
+      "name": "Daniel Lloyd"
+    },
+    {
+      "createdAt": "2025-04-02T13:04:58.398Z",
+      "updatedAt": "2025-04-02T13:04:58.398Z",
+      "id": "o6ewh6U94QE47gTp",
+      "name": "Thiago Borsoni"
+    },
+    {
+      "createdAt": "2025-04-02T13:04:37.328Z",
+      "updatedAt": "2025-04-02T13:04:37.328Z",
+      "id": "vhM54PuUkKiv8aBP",
+      "name": "Luis Pastura"
+    }
+  ]
+}
