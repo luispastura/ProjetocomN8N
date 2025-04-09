@@ -1,49 +1,50 @@
-# ProjetocomN8N
-Descrição:
+📌 Workflow 
 
-Este workflow automatiza a captura, processamento e armazenamento de dados de ônibus em movimento, provenientes de uma API externa, com objetivo de formatar e padronizar os dados para análises posteriores.
+🚀 Descrição
 
-Funcionalidades:
+Este workflow automatiza a coleta, processamento e armazenamento dos dados de ônibus em movimento, obtidos de uma API externa. O objetivo é padronizar e formatar os dados coletados, tornando-os prontos para análises posteriores.
 
-Agendamento de Execução:
+⚙️ Funcionalidades
 
-Utiliza o nó "Schedule Trigger" configurado para execução periódica em minutos específicos.
+⏰ Agendamento Automático
 
-Requisição HTTP:
+Execução periódica em intervalos definidos por minuto.
 
-Realiza uma requisição HTTP GET na URL especificada para obter os dados brutos dos ônibus (https://web-production-1e19.up.railway.app/onibus_bruto).
+🌐 Integração via HTTP Request
 
-Filtragem de Dados:
+Obtém dados em formato bruto através de uma requisição GET.
 
-Aplica um filtro para excluir registros com velocidade igual a "0" e registros com linha marcada como "GARAGEM".
+🔍 Filtro Inteligente
 
-Cálculo de Tempo de Transmissão:
+Exclui registros onde a velocidade do ônibus é "0" ou linha marcada como "GARAGEM".
 
-Calcula o tempo gasto na transmissão de dados (transmissao) com base nas diferenças entre as datas (datahoraservidor e datahora).
+⏱️ Cálculo do Tempo de Transmissão
 
-Formatação de Datas:
+Determina o tempo entre a captura e o recebimento dos dados.
 
-Transforma timestamps em formato legível de data e hora padrão (yyyy-MM-dd HH:mm:ss:SSS).
+🗓️ Formatação Clara de Datas
 
-Padronização dos Dados de GPS:
+Converte timestamps em formato legível (yyyy-MM-dd HH:mm:ss:SSS).
 
-Corrige o formato das coordenadas geográficas substituindo vírgulas por pontos.
+📍 Padronização das Coordenadas GPS
 
-Armazenamento no Google Sheets:
+Ajusta as coordenadas geográficas para um formato consistente, substituindo vírgulas por pontos.
 
-Insere os dados tratados em uma planilha específica do Google Sheets, facilitando análises posteriores.
+📊 Armazenamento Automatizado
 
-Estrutura do Workflow:
+Envia dados tratados diretamente para o Google Sheets para futura análise.
+
+🔄 Fluxo de Execução
 
 Schedule Trigger → HTTP Request → Filtrar Velocidade e Linha → Calcula Transmissão → Formatar Datas → Padronizar GPS → Google Sheets
 
-Campos Armazenados:
+📝 Campos Registrados
 
-datahora: Data e hora original dos dados
+datahora: Data/hora original dos dados
 
-datahoraenvio: Data e hora do envio dos dados
+datahoraenvio: Data/hora do envio dos dados
 
-datahoraservidor: Data e hora de recebimento dos dados no servidor
+datahoraservidor: Data/hora de recebimento dos dados
 
 latitude: Latitude do veículo
 
@@ -51,31 +52,33 @@ longitude: Longitude do veículo
 
 linha: Linha do ônibus
 
-ordem: Código identificador do ônibus
+ordem: Identificação do ônibus
 
 velocidade: Velocidade do ônibus
 
-transmissao: Tempo decorrido para transmissão dos dados
+transmissao: Tempo de transmissão dos dados
 
-Tecnologias utilizadas:
+🛠️ Tecnologias Utilizadas
 
 n8n
 
 Google Sheets API
 
-HTTP REST API
+REST API via HTTP
 
-Requisitos de uso:
+📋 Pré-requisitos
 
-Credenciais válidas do Google Sheets configuradas no n8n
+Credenciais válidas configuradas no Google Sheets (n8n)
 
-URL da API ativa e acessível
+URL da API disponível e acessível
 
-Considerações:
+⚠️ Notas Importantes
 
-Certifique-se de que a execução do workflow esteja ativa no n8n para captura contínua dos dados. Ajuste os filtros e formatações conforme necessário para atender a requisitos específicos do projeto.
+Certifique-se de ativar a execução no n8n para garantir a captura contínua.
 
-Desenvolvedores:
+Ajuste os parâmetros de filtro e formatação conforme necessidades específicas.
+
+👨‍💻 Equipe de Desenvolvimento
 
 Gui Duran
 
